@@ -2,16 +2,7 @@ import React, { Component } from "react";
 import DatePicker from "react-datepicker";
 import "./filters-field.scss";
 import "react-datepicker/dist/react-datepicker.css";
-
-import { Dropdown } from 'semantic-ui-react';
 import Select from 'react-select';
-
-const options = [
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'strawberry', label: 'Strawberry' },
-  { value: 'vanilla', label: 'Vanilla' }
-]
-
 
 class FiltersField extends Component {
 

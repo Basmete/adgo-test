@@ -94,6 +94,12 @@ class App extends Component {
     });
   };
 
+  changeTotalItems = (total) => {
+    this.setState({
+      totalItems: total
+    })
+  }
+
   changeOffset = (operation, counter) => {
     if (operation === "+") {
       this.setState({
@@ -108,12 +114,6 @@ class App extends Component {
         offset: operation
       })
     } 
-  }
-
-  changeTotalItems = (total) => {
-    this.setState({
-      totalItems: total
-    })
   }
 
   render() {

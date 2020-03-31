@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer } from "react";
 import TableRow from "../table-row";
 import withAPIService from "../hoc/with-APIService";
 import generateKey from "../../utils/key-generator";
@@ -16,17 +16,58 @@ const Table = ({
   changeTotalItems,
   currentFilter
 }) => {
-  const [total, setTotal] = useState(1);
-  const [data, setData] = useState([]);
-  const [from, setFrom] = useState(dateFrom);
-  const [to, setTo] = useState(dateTo);
-  const [loading, setLoading] = useState(false);
+
+  const initialState = {
+    total: 1,
+    data: [],
+    from: dateFrom,
+    to: dateTo,
+    loading: false
+  };
+  
+  const [state, dispatch] = useReducer(tableReducer, initialState);
+
+  function tableReducer(state, action) {
+    switch (action.type) {
+      case "total": 
+        return {
+          ...state,
+          total: action.payload
+        };
+      case "data":
+        return {
+          ...state,
+          data: action.payload
+        };
+      case "from":
+        return {
+          ...state,
+          from: action.payload
+        };
+      case "to":
+        return {
+          ...state,
+          to: action.payload
+        };
+      case "loading":
+        return {
+          ...state,
+          loading: action.payload
+        };
+      default:
+        return state;
+    }
+  }
+
+  
+  const { from, to, total, data, loading } = state;
+  
 
   useEffect(() => {
-    setFrom(dateFrom);
-    setTo(dateTo);
+    dispatch({ type: "from", payload: dateFrom });
+    dispatch({ type: "to", payload: dateTo });
     const fetchData = async () => {
-      setLoading(true);
+      dispatch({ type: "loading", payload: true });
       const params = await getGroups();
       const param = params.find(item => item.label === groupBy);
       const result = await getStatistics(
@@ -36,10 +77,10 @@ const Table = ({
         25,
         offset
       );
-      setData(result.rows);
-      setTotal(result.count);
+      dispatch({ type: "data", payload: result.rows });
+      dispatch({ type: "total", payload: result.count });
       changeTotalItems(total);
-      setLoading(false)
+      dispatch({ type: "loading", payload: false });
     };
 
     fetchData();
@@ -53,21 +94,22 @@ const Table = ({
     offset,
     total,
     changeTotalItems,
-    currentFilter
+    currentFilter,
+    getGroups
   ]);
 
   const rows = data.map((item, index) => {
-
     const key = generateKey(index);
     if (currentFilter === "..." || !currentFilter) {
       return <TableRow key={key} {...item} />;
-    } 
+    }
 
-
-    
-    if ( currentFilter.indexOf(item.platform) !== -1 || !currentFilter) {
+    if (currentFilter.indexOf(item.platform) !== -1 || !currentFilter) {
       return <TableRow key={key} {...item} />;
-    } else if (currentFilter.indexOf(item.operatingSystem) !== -1 || !currentFilter) {
+    } else if (
+      currentFilter.indexOf(item.operatingSystem) !== -1 ||
+      !currentFilter
+    ) {
       return <TableRow key={key} {...item} />;
     } else if (currentFilter.indexOf(item.browser) !== -1 || !currentFilter) {
       return <TableRow key={key} {...item} />;
@@ -75,12 +117,10 @@ const Table = ({
   });
 
   if (loading) {
-    return <Spinner/>
+    return <Spinner />;
   }
 
-  return (
-    <TableHeader groupBy={groupBy} rows={rows}/>
-  );
+  return <TableHeader groupBy={groupBy} rows={rows} />;
 };
 
 const mapMethodsToProps = ({ getStatistics, getGroups }) => {
