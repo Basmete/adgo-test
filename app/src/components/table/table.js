@@ -79,7 +79,7 @@ const Table = ({
       );
       dispatch({ type: "data", payload: result.rows });
       dispatch({ type: "total", payload: result.count });
-      changeTotalItems(total);
+      changeTotalItems("totalItems", total);
       dispatch({ type: "loading", payload: false });
     };
 

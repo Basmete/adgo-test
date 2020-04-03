@@ -42,37 +42,25 @@ class App extends Component {
     this.updateItem();
   }
 
+  setDataFromServer = (getter, value) => {
+    getter().then(item => {
+      this.setState({
+        [value]: item
+      })
+    })
+  }
+
   updateItem() {
     const {
       getGroups,
       getOperatingSystems,
       getBrowsers,
       getPlatforms
-    } = this.props;
-
-    getGroups().then(item => {
-      this.setState({
-        groups: item
-      });
-    });
-
-    getBrowsers().then(item => {
-      this.setState({
-        browsers: item
-      });
-    });
-
-    getOperatingSystems().then(item => {
-      this.setState({
-        operatingSystems: item
-      });
-    });
-
-    getPlatforms().then(item => {
-      this.setState({
-        platforms: item
-      });
-    });
+    } = this.props; 
+    this.setDataFromServer(getGroups, "groups")
+    this.setDataFromServer(getBrowsers, "browsers")
+    this.setDataFromServer(getOperatingSystems, "operatingSystems")
+    this.setDataFromServer(getPlatforms, "platforms")
   }
 
   onGroupBySelector = e => {
@@ -82,21 +70,9 @@ class App extends Component {
     });
   };
 
-  changeDateFrom = date => {
+  updateState = (stateKey, stateValue) => {
     this.setState({
-      selectedDateFrom: date
-    });
-  };
-
-  changeDateTo = date => {
-    this.setState({
-      selectedDateTo: date
-    });
-  };
-
-  changeTotalItems = (total) => {
-    this.setState({
-      totalItems: total
+      [stateKey]: stateValue
     })
   }
 
@@ -139,8 +115,8 @@ class App extends Component {
             browsers={browsers}
             operatingSystems={operatingSystems}
             groups={groups}
-            changeDateFrom={this.changeDateFrom}
-            changeDateTo={this.changeDateTo}
+            changeDateFrom={this.updateState}
+            changeDateTo={this.updateState}
             selectedDateFrom={selectedDateFrom}
             selectedDateTo={selectedDateTo}
             testFunc={this.testFunc}
@@ -152,7 +128,7 @@ class App extends Component {
             dateFrom={selectedDateFrom}
             dateTo={selectedDateTo}
             offset={offset}
-            changeTotalItems={this.changeTotalItems}
+            changeTotalItems={this.updateState}
             currentFilter={currentFilter}
           />
           <Pagination

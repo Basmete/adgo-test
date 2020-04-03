@@ -81,7 +81,7 @@ class FiltersField extends Component {
             </label>
             <DatePicker
               selected={selectedDateFrom}
-              onChange={date => changeDateFrom(date)}
+              onChange={date => changeDateFrom("selectedDateFrom", date)}
               id="dateFrom"
               className="customPicker"
               minDate={new Date(2019, 4, 24)}
@@ -94,7 +94,7 @@ class FiltersField extends Component {
             </label>
             <DatePicker
               selected={selectedDateTo}
-              onChange={date => changeDateTo(date)}
+              onChange={date => changeDateTo("selectedDateTo", date)}
               id="dateTo"
               className="customPicker"
             />
